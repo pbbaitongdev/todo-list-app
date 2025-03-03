@@ -22,8 +22,6 @@ function App() {
       )
     );
     if (!val.disabled) {
-      console.log(val);
-      console.log(inputRef);
       inputRef.current.focus();
     }
   };

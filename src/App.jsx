@@ -1,30 +1,41 @@
-import { useState, useRef } from "react";
+import { useState, useRef, useEffect } from "react";
 
 function App() {
   const [task, setTask] = useState("");
   const [todolist, setTodolist] = useState([]);
+  const inputRefs = useRef([]);
 
-  const inputRef = useRef(null);
-
+  // Add a new task to the list
   const addTask = () => {
     setTodolist([...todolist, { value: task, disabled: true }]);
     setTask("");
   };
-  const deleteTask = (val) => {
-    // console.log(val);
-    setTodolist([...todolist.slice(0, val), ...todolist.slice(val + 1)]);
+
+  // Delete a task from the list
+  const deleteTask = (index) => {
+    setTodolist([...todolist.slice(0, index), ...todolist.slice(index + 1)]);
   };
 
-  const editTask = (val) => {
-    setTodolist((prevTodolist) =>
-      prevTodolist.map((item) =>
-        item === val ? { ...item, disabled: !item.disabled } : item
+  // Toggle the disabled state of a task
+  const toggleEdit = (index) => {
+    setTodolist(
+      todolist.map((item, i) =>
+        i === index ? { ...item, disabled: !item.disabled } : item
       )
     );
-    if (!val.disabled) {
-      inputRef.current.focus();
-    }
   };
+
+  // Use useEffect to focus the input field after it is enabled (the component has re-rendered)
+  useEffect(() => {
+    // Find the index of the task that is in edit mode (item.disabled === false)
+    const enabledInputIndex = todolist.findIndex((item) => !item.disabled);
+    // If an enabled input field is found and its ref exists, focus it
+    if (enabledInputIndex !== -1 && inputRefs.current[enabledInputIndex]) {
+      inputRefs.current[enabledInputIndex].focus();
+    }
+  }, [todolist]); // Run this effect whenever todolist changes
+
+  console.log(todolist);
 
   return (
     <>
@@ -51,7 +62,6 @@ function App() {
           <h3>Your Todos</h3>
 
           <ul className="todo_container">
-            {/* {JSON.stringify(todolist)} */}
             {todolist.map((item, index) => (
               <>
                 <li key={index}>
@@ -59,11 +69,23 @@ function App() {
                     type="text"
                     value={item.value}
                     disabled={item.disabled}
-                    // autoFocus
-                    ref={inputRef}
+                    ref={(el) => (inputRefs.current[index] = el)}
+                    onChange={(e) => {
+                      // Update the task value when editing
+                      setTodolist(
+                        todolist.map((task, i) =>
+                          i === index
+                            ? { ...task, value: e.target.value }
+                            : task
+                        )
+                      );
+                    }}
                   ></input>
                   <div className="buttons">
-                    <button className="editBtn" onClick={() => editTask(item)}>
+                    <button
+                      className="editBtn"
+                      onClick={() => toggleEdit(index)}
+                    >
                       {item.disabled ? "Edit" : "Save"}
                     </button>
                     <button

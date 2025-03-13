@@ -63,40 +63,33 @@ function App() {
 
           <ul className="todo_container">
             {todolist.map((item, index) => (
-              <>
-                <li key={index}>
-                  <input
-                    type="text"
-                    value={item.value}
-                    disabled={item.disabled}
-                    ref={(el) => (inputRefs.current[index] = el)}
-                    onChange={(e) => {
-                      // Update the task value when editing
-                      setTodolist(
-                        todolist.map((task, i) =>
-                          i === index
-                            ? { ...task, value: e.target.value }
-                            : task
-                        )
-                      );
-                    }}
-                  ></input>
-                  <div className="buttons">
-                    <button
-                      className="editBtn"
-                      onClick={() => toggleEdit(index)}
-                    >
-                      {item.disabled ? "Edit" : "Save"}
-                    </button>
-                    <button
-                      className="deleteBtn"
-                      onClick={() => deleteTask(index)}
-                    >
-                      Delete
-                    </button>
-                  </div>
-                </li>
-              </>
+              <li key={index}>
+                <input
+                  type="text"
+                  value={item.value}
+                  disabled={item.disabled}
+                  ref={(el) => (inputRefs.current[index] = el)}
+                  onChange={(e) => {
+                    // Update the task value when editing
+                    setTodolist(
+                      todolist.map((task, i) =>
+                        i === index ? { ...task, value: e.target.value } : task
+                      )
+                    );
+                  }}
+                />
+                <div className="buttons">
+                  <button className="editBtn" onClick={() => toggleEdit(index)}>
+                    {item.disabled ? "Edit" : "Save"}
+                  </button>
+                  <button
+                    className="deleteBtn"
+                    onClick={() => deleteTask(index)}
+                  >
+                    Delete
+                  </button>
+                </div>
+              </li>
             ))}
           </ul>
         </section>
